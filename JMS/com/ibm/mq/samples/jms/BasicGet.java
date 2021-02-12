@@ -16,13 +16,8 @@
 
 package com.ibm.mq.samples.jms;
 
-import com.ibm.mq.samples.jms.BasicConsumer;
-
-
 public class BasicGet {
     public static void main(String[] args) {
-        BasicConsumer bc = new BasicConsumer(BasicConsumer.CONSUMER_GET);
-        bc.receive();
-        bc.close();
+        BasicConsumerWrapper.performGet();
     }
 }

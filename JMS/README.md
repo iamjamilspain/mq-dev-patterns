@@ -56,24 +56,99 @@ Encapsulates the reading of MQ environment variables and allows all the samples 
 
 ***LoggingHelper.java*** - Common class to set up logging options
 
+For TLS info, see the end of this document.
+
+## Maven
+A maven `pom.xml` is provided allowing you to use maven to download dependancies and build the samples. A symbolic link links the maven required `./src/main/java/com` directory to the `./com` directory.
+
+### Downloading dependencies with maven
+Whenever you build the samples with maven the dependencies will be downloaded and stored in your local maven repository. You can override this location, but by
+default the repository location will be:
+
+- Windows: C:\Users\<User_Name>\.m2\repository
+- Linux: /home/<User_Name>/.m2/repository
+- Mac: /Users/<user_name>/.m2/repository
+
+The maven build has been configured to create an uber jar containing all dependencies, but if you need the jar files in a more convenient location you can run the maven command:
+
+````
+mvn dependency:copy-dependencies -DoutputDirectory=.
+````
+Which will download and copy the dependencies into the current directory.
+
+
+### Building the samples with maven
+You can build the samples by running the command.
+
+````
+mvn clean package
+````
+The `clean` option will clear out any previous build.
+The build will create a ./target/mq-dev-patterns-0.1.0.jar file containing the
+compiled samples.
+
+The package phase in the `pom.xml` includes `maven-shade-plugin` which will
+create an uber `.jar` file containing all dependencies.
+
+If you use maven to build the samples, you will not need to compile them separately.
+
+
+### Running maven built samples.
+The main class in the uber jar is `com.ibm.mq.samples.jms.BasicSampleDriver`, which will run the basic put / get and pub / sub samples.
+
+To put 6 messages run:
+````
+java -jar target/mq-dev-patterns-0.1.0.jar put 6
+````
+
+To get the messages run:
+````
+java -jar target/mq-dev-patterns-0.1.0.jar get
+````
+
+To publish 5 messages run:
+````
+java -jar target/mq-dev-patterns-0.1.0.jar pub 5
+````
+
+To subscribe run:
+````
+java -jar target/mq-dev-patterns-0.1.0.jar sub 
+````
+
+To run any of the samples you can specify the `.jar` file as the classpath.
+EG. To run the JmsPut sample:
+
+````
+java -cp target/mq-dev-patterns-0.1.0.jar: com.ibm.mq.samples.jms.JmsPut
+````
+
 
 ## Put / Get
 From the top level JMS folder, compile first
 
-`javac -cp ./com.ibm.mq.allclient-9.1.1.0.jar:./javax.jms-api-2.0.1.jar:./json-simple-1.1.1.jar:. com/ibm/mq/samples/jms/JmsPut.java`
+`javac -cp ./com.ibm.mq.allclient-9.2.0.1.jar:./javax.jms-api-2.0.1.jar:./json-simple-1.1.1.jar:. com/ibm/mq/samples/jms/JmsPut.java`
 
 and run
 
-`java -cp ./com.ibm.mq.allclient-9.1.1.0.jar:./javax.jms-api-2.0.1.jar:./json-simple-1.1.1.jar:. com.ibm.mq.samples.jms.JmsPut`
+`java -cp ./com.ibm.mq.allclient-9.2.0.1.jar:./javax.jms-api-2.0.1.jar:./json-simple-1.1.1.jar:. com.ibm.mq.samples.jms.JmsPut`
+
+If you have used maven to build the samples, you can run
+
+`java -cp target/mq-dev-patterns-0.1.0.jar: com.ibm.mq.samples.jms.JmsPut`
+
 
 In a separate terminal, from the top level JMS folder, compile first
 
-`javac -cp ./com.ibm.mq.allclient-9.1.1.0.jar:./javax.jms-api-2.0.1.jar:./json-simple-1.1.1.jar:. com/ibm/mq/samples/jms/JmsGet.java`
+`javac -cp ./com.ibm.mq.allclient-9.2.0.1.jar:./javax.jms-api-2.0.1.jar:./json-simple-1.1.1.jar:. com/ibm/mq/samples/jms/JmsGet.java`
 
 and run
 
-`java -cp ./com.ibm.mq.allclient-9.1.1.0.jar:./javax.jms-api-2.0.1.jar:./json-simple-1.1.1.jar:. com.ibm.mq.samples.jms.JmsGet`
+`java -cp ./com.ibm.mq.allclient-9.2.0.1.jar:./javax.jms-api-2.0.1.jar:./json-simple-1.1.1.jar:. com.ibm.mq.samples.jms.JmsGet`
 
+If you have used maven to build the samples, you can run
+
+`java -cp target/mq-dev-patterns-0.1.0.jar: com.ibm.mq.samples.jms.JmsGet`
 
 ## Publish / Subscribe
 Open two terminals.
@@ -84,11 +159,15 @@ You have to run the subscriber sample first so it creates a subscription and wai
 
 Compile first
 
-`javac -cp ./com.ibm.mq.allclient-9.1.1.0.jar:./javax.jms-api-2.0.1.jar:./json-simple-1.1.1.jar:. com/ibm/mq/samples/jms/JmsSub.java`
+`javac -cp ./com.ibm.mq.allclient-9.2.0.1.jar:./javax.jms-api-2.0.1.jar:./json-simple-1.1.1.jar:. com/ibm/mq/samples/jms/JmsSub.java`
 
 then run
 
-`java -cp ./com.ibm.mq.allclient-9.1.1.0.jar:./javax.jms-api-2.0.1.jar:./json-simple-1.1.1.jar:. com.ibm.mq.samples.jms.JmsSub`
+`java -cp ./com.ibm.mq.allclient-9.2.0.1.jar:./javax.jms-api-2.0.1.jar:./json-simple-1.1.1.jar:. com.ibm.mq.samples.jms.JmsSub`
+
+If you have used maven to build the samples, you can run
+
+`java -cp target/mq-dev-patterns-0.1.0.jar: com.ibm.mq.samples.jms.JmsSub`
 
 In the second terminal;
 
@@ -96,11 +175,15 @@ Run the publisher sample
 
 Compile first
 
-`javac -cp ./com.ibm.mq.allclient-9.1.1.0.jar:./javax.jms-api-2.0.1.jar:./json-simple-1.1.1.jar:. com/ibm/mq/samples/jms/JmsPub.java`
+`javac -cp ./com.ibm.mq.allclient-9.2.0.1.jar:./javax.jms-api-2.0.1.jar:./json-simple-1.1.1.jar:. com/ibm/mq/samples/jms/JmsPub.java`
 
 then run
 
-`java -cp ./com.ibm.mq.allclient-9.1.1.0.jar:./javax.jms-api-2.0.1.jar:./json-simple-1.1.1.jar:. com.ibm.mq.samples.jms.JmsPub`
+`java -cp ./com.ibm.mq.allclient-9.2.0.1.jar:./javax.jms-api-2.0.1.jar:./json-simple-1.1.1.jar:. com.ibm.mq.samples.jms.JmsPub`
+
+If you have used maven to build the samples, you can run
+
+`java -cp target/mq-dev-patterns-0.1.0.jar: com.ibm.mq.samples.jms.JmsPub`
 
 ## Request / Response
 Open two terminals.
@@ -111,13 +194,18 @@ Run the request sample
 
 Compile
 
-`javac -cp ./com.ibm.mq.allclient-9.1.1.0.jar:./javax.jms-api-2.0.1.jar:./json-simple-1.1.1.jar:. com/ibm/mq/samples/jms/JmsRequest.java`
+`javac -cp ./com.ibm.mq.allclient-9.2.0.1.jar:./javax.jms-api-2.0.1.jar:./json-simple-1.1.1.jar:. com/ibm/mq/samples/jms/JmsRequest.java`
 
 then run
 
-`java -cp ./com.ibm.mq.allclient-9.1.1.0.jar:./javax.jms-api-2.0.1.jar:./json-simple-1.1.1.jar:. com.ibm.mq.samples.jms.JmsRequest`
+`java -cp ./com.ibm.mq.allclient-9.2.0.1.jar:./javax.jms-api-2.0.1.jar:./json-simple-1.1.1.jar:. com.ibm.mq.samples.jms.JmsRequest`
 
-The request sample will put a message and wait for a response until it either gets a response or you ctrl+c interrupt it.
+
+If you have used maven to build the samples, you can run
+
+`java -cp target/mq-dev-patterns-0.1.0.jar: com.ibm.mq.samples.jms.JmsRequest`
+
+The request sample will put a message and wait for a response until it either gets a response or you `ctrl+c` interrupt it.
 
 In the second terminal;
 
@@ -125,11 +213,15 @@ Run the response sample
 
 Compile first
 
-`javac -cp ./com.ibm.mq.allclient-9.1.1.0.jar:./javax.jms-api-2.0.1.jar:./json-simple-1.1.1.jar:. com/ibm/mq/samples/jms/JmsResponse.java`
+`javac -cp ./com.ibm.mq.allclient-9.2.0.1.jar:./javax.jms-api-2.0.1.jar:./json-simple-1.1.1.jar:. com/ibm/mq/samples/jms/JmsResponse.java`
 
 and run
 
-`java -cp ./com.ibm.mq.allclient-9.1.1.0.jar:./javax.jms-api-2.0.1.jar:./json-simple-1.1.1.jar:. com.ibm.mq.samples.jms.JmsResponse`
+`java -cp ./com.ibm.mq.allclient-9.2.0.1.jar:./javax.jms-api-2.0.1.jar:./json-simple-1.1.1.jar:. com.ibm.mq.samples.jms.JmsResponse`
+
+If you have used maven to build the samples, you can run
+
+`java -cp target/mq-dev-patterns-0.1.0.jar: com.ibm.mq.samples.jms.JmsResponse`
 
 The response sample will get a message from the queue, process it and put the response on the reply to queue and keep looking for more messages to respond to till you ctrl+c interrupt it.
 
@@ -150,7 +242,7 @@ Will be compiled when you compile either request / response samples.
 
 To run the samples with TLS you need to provide additional arguments;
 
-`java -Djavax.net.ssl.trustStoreType=jks -Djavax.net.ssl.trustStore=/your_key_directory/clientkey.jks -Djavax.net.ssl.trustStorePassword=<your_keystore_pw> -Dcom.ibm.mq.cfg.useIBMCipherMappings=false -cp ./com.ibm.mq.allclient-9.1.1.0.jar:./javax.jms-api-2.0.1.jar:. com.ibm.mq.samples.jms.JmsPut`
+`java -Djavax.net.ssl.trustStoreType=jks -Djavax.net.ssl.trustStore=/your_key_directory/clientkey.jks -Djavax.net.ssl.trustStorePassword=<your_keystore_pw> -Dcom.ibm.mq.cfg.useIBMCipherMappings=false -cp ./com.ibm.mq.allclient-9.2.0.1.jar:./javax.jms-api-2.0.1.jar:./json-simple-1.1.1.jar:. com.ibm.mq.samples.jms.JmsPut`
 
  *A note on the* `Dcom.ibm.mq.cfg.useIBMCipherMappings=false` property
 
